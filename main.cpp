@@ -10,6 +10,7 @@ using namespace boost::program_options;
 void print_usage()
 {
     std::cout << "Usage: \n";
+    std::cout << "--path PATH\n";
     std::cout << "--add DATA_STRING\n";
     std::cout << "--print\n";
 }
@@ -18,13 +19,21 @@ int main(int argc, char** argv)
 {
     options_description desc;
     desc.add_options()
+        ("path", value<std::string>(), "path to the storage")
         ("add", value<std::string>(), "adds block to the chain")
         ("print", "prints the chain");
 
     variables_map vm;    
     store(parse_command_line(argc, argv, desc), vm);
 
-    Chain chain("/home/master/study_workspace/leveldb", 18);
+    if (!vm.count("path"))
+    {   
+        std::cout << "storage path is not specified\n";
+        print_usage();
+        return 0;
+    }
+
+    Chain chain(vm["path"].as<std::string>(), 18);
 
     if (vm.count("add"))
     {
