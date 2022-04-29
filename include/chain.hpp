@@ -3,7 +3,6 @@
 #include "proof_of_work.hpp"
 #include "leveldb.hpp"
 
-#include <vector>
 #include <memory>
 
 using BlockPtr = std::unique_ptr<Block>;
@@ -11,7 +10,7 @@ using BlockPtr = std::unique_ptr<Block>;
 class ChainIterator
 {
 public:
-    ChainIterator(std::unique_ptr<LevelDB>& db_ptr, const std::string& last_hash):db_ptr(db_ptr), prev_hash(last_hash){}
+    ChainIterator(std::unique_ptr<LevelDB>& db_ptr, const string& last_hash):db_ptr(db_ptr), prev_hash(last_hash){}
 
 public:
     Block next()
@@ -25,26 +24,33 @@ public:
     }
 
 private:
-    std::string prev_hash;
+    string prev_hash;
     std::unique_ptr<LevelDB>& db_ptr;
 };
+
+using unspent_outputs = std::pair<std::map<string, vector<int>>, int>;
 
 class Chain
 {
 public:
-    Chain(const std::string& db_path, int difficulty = 12);
+    Chain(const string& address, const string& db_path);
+    Chain(const string& db_path);
 
 public:
     int  get_difficulty() { return difficulty; }
     void set_difficulty(int difficulty) { this->difficulty = difficulty; }
-    void add_block(const std::string& data);
+    void add_block(TxVector transactions);
+
+    TxVector         get_unspent_txs(const string& address);
+    vector<TxOutput> get_utxo(const string& address); 
+    unspent_outputs  get_unspent_outs(const string& address, int amount);
 
 public:
     ChainIterator get_iter() { return ChainIterator(db_ptr, last_hash); }
 
 private:
-    int difficulty;
-    std::string last_hash;
+    int difficulty = 18;
+    string last_hash;
 
     std::unique_ptr<LevelDB> db_ptr;
 };

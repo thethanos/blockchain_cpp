@@ -8,6 +8,6 @@
 
 using boost::multiprecision::uint256_t;
 
-std::pair<std::string, int> prove(std::string prev_hash, std::string data, uint difficulty);
+std::pair<string, int> prove(string prev_hash, string data, uint difficulty);
 
 bool validate(const Block* block, int difficulty);

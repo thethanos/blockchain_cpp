@@ -2,12 +2,12 @@
 
 #include <sstream>
 
-Block::Block(const std::string& prev_hash, const std::string& data, const std::string& hash, int nonce)
+Block::Block(const std::string& prev_hash, const TxVector& transactions, const std::string& hash, int nonce)
 {
-    this->prev_hash = prev_hash;
-    this->data      = data;
-    this->hash      = hash;
-    this->nonce     = nonce;
+    this->prev_hash    = prev_hash;
+    this->transactions = transactions;
+    this->hash         = hash;
+    this->nonce        = nonce;
 }
 
 std::string Block::serialize()

@@ -1,31 +1,30 @@
 #pragma once
 
-#include <string>
-
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
+#include "transaction.hpp"
 
 class Block
 {
 public:
     Block(){}
-    Block(const std::string& prev_hash, const std::string& data, const std::string& hash, int nonce);
+    Block(const string& prev_hash, const TxVector& transactions, const string& hash, int nonce);
 
 public:
-    const std::string& get_prev_hash() const { return prev_hash; }
-    const std::string& get_hash()      const { return hash; }
-    const std::string& get_data()      const { return data; }
-    const int          get_nonce()     const { return nonce; }
+    const string&  get_prev_hash()  const { return prev_hash; }
+    const string&  get_hash()       const { return hash; }
+    const int      get_nonce()      const { return nonce; }
+
+    TxVector get_txvector() const { return transactions; }
 
 public:
-    std::string serialize();
-    void        deserialize(const std::string& data);
+    string serialize();
+    void   deserialize(const std::string& data);
 
 private:
-    std::string  prev_hash;
-    std::string  hash;
-    std::string  data;
-    int          nonce;
+    string  prev_hash;
+    string  hash;
+
+    TxVector transactions;
+    int nonce;
 
 private:
     friend class boost::serialization::access;
@@ -35,7 +34,7 @@ private:
     {
         serializer & prev_hash;
         serializer & hash;
-        serializer & data;
+        serializer & transactions;
         serializer & nonce;
     }
 };

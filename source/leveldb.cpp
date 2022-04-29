@@ -1,6 +1,6 @@
 #include "leveldb.hpp"
 
-LevelDB::LevelDB(const std::string& path)
+LevelDB::LevelDB(const string& path)
 {
     leveldb::Options options;
     options.create_if_missing = true;
@@ -10,16 +10,16 @@ LevelDB::LevelDB(const std::string& path)
         throw std::runtime_error("Failed to open leveldb");
 }
 
-void LevelDB::put(const std::string& key, const std::string& value)
+void LevelDB::put(const string& key, const string& value)
 {
     leveldb::Status status = db_ptr->Put(leveldb::WriteOptions(), key, value);
     if (!status.ok())
         throw std::runtime_error("Failed to put value");
 }
 
-std::string LevelDB::get(const std::string& key)
+string LevelDB::get(const string& key)
 {
-    std::string buffer;
+    string buffer;
     leveldb::Status status = db_ptr->Get(leveldb::ReadOptions(), key, &buffer);
 
     return buffer;

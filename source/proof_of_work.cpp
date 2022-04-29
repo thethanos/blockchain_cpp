@@ -1,22 +1,21 @@
 #include "proof_of_work.hpp"
 
-#include "sha256.hpp"
 #include "util.hpp"
 
-std::pair<std::string, int> prove(std::string prev_hash, std::string data, uint difficulty)
+std::pair<string, int> prove(string prev_hash, string data, uint difficulty)
 {  
     uint256_t uint_hash(0);
     uint256_t target(1);
 
     target = target << (256 - difficulty);
 
-    std::string hash;
-    uint        nonce(0); 
+    string hash;
+    uint   nonce(0); 
     while(nonce < INT32_MAX)
     {
-        auto new_data = std::string{prev_hash + data + to_hex_string(nonce) + to_hex_string(difficulty)};
+        auto new_data = string{prev_hash + data + to_hex_string(nonce) + to_hex_string(difficulty)};
 
-        hash = sha256sum(new_data);
+        hash = sha::sum256(new_data);
         std::cout << hash << '\r';
 
         uint_hash.assign("0x" + hash);
@@ -32,10 +31,10 @@ std::pair<std::string, int> prove(std::string prev_hash, std::string data, uint 
 
 bool validate(const Block* block, int difficulty)
 {
-    auto test_data = std::string{block->get_prev_hash() + block->get_data() + to_hex_string(block->get_nonce()) + to_hex_string(difficulty)};
+    auto data = string{block->get_prev_hash() + block->get_txvector().get_txhash() + to_hex_string(block->get_nonce()) + to_hex_string(difficulty)};
 
     uint256_t uint_hash(0);
-    uint_hash.assign("0x" + sha256sum(test_data));
+    uint_hash.assign("0x" + sha::sum256(data));
 
     uint256_t target(1);
     target = target << (256 - difficulty);
