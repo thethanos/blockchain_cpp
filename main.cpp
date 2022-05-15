@@ -60,7 +60,14 @@ int main(int argc, char** argv)
         auto to     = vm["to"].as<std::string>();
         auto amount = vm["amount"].as<int>();
 
-        Transaction tx(from, to, amount, chain.get_unspent_outs(from, amount));
+        auto unspent_outs = chain.get_unspent_outs(from, amount);
+        if (unspent_outs.second < amount)
+        {
+            std::cout << "not enough coins\n";
+            return 0;
+        }
+
+        Transaction tx(from, to, amount, unspent_outs);
 
         chain.add_block(TxVector(tx));
         return 0;
